@@ -1,10 +1,10 @@
 # utils.py
 import tkinter as tk
 from tkinter import simpledialog, Toplevel, Radiobutton, Label, Entry, Button
-
+from collections import deque
 import data_management
 import utils
-from handlers import add_neighboring_station, delete_station, view_transfers
+from handlers import add_neighboring_station, delete_station, view_transfers, toggle_station_status
 
 
 def on_right_click(event, station, canvas, data, line_id):
@@ -13,9 +13,14 @@ def on_right_click(event, station, canvas, data, line_id):
     menu.add_command(label="增加邻近站点", command=lambda: add_neighboring_station(station, data, canvas, line_id))
     menu.add_command(label="删除该站点", command=lambda: delete_station(station, data, canvas, line_id))
     menu.add_command(label="查看换乘情况", command=lambda: view_transfers(station, data, canvas))  # 新增查看换乘情况
-
-    # 显示菜单
+    if station.get('status') == 'open':
+        menu.add_command(label="封闭站点",
+                         command=lambda: toggle_station_status(station, data, canvas, line_id, 'closed'))
+    else:
+        menu.add_command(label="恢复站点",
+                         command=lambda: toggle_station_status(station, data, canvas, line_id, 'open'))
     menu.post(event.x_root, event.y_root)
+
 
 def update_canvas_on_select(event, canvas, data, line_id):
     # 当选中列表中的项时，重新绘制相关线路
@@ -36,7 +41,6 @@ def draw_line(canvas, line, data):
 
     # Display the line name at the top of the canvas
     canvas.create_text(400, 20, text=f"当前线路：{line['lineName']}", font=('Helvetica', 10, 'bold'))
-
 
     start_x, start_y = 50, 50  # Initial starting position on the canvas
     x, y = start_x, start_y
@@ -59,6 +63,14 @@ def draw_line(canvas, line, data):
         canvas.create_text(x, y + 20, text=station['stationName'])
         canvas.tag_bind(station_id, "<Button-3>",
                         lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID']))
+
+        # 修改叉号样式：更粗的线条和红色
+        cross_thickness = 2  # 线条粗细
+        cross_color = "black"  # 叉号颜色
+
+        if station.get('status') == 'closed':
+            canvas.create_line(x - 12, y - 12, x + 12, y + 12, fill=cross_color, width=cross_thickness)
+            canvas.create_line(x + 12, y - 12, x - 12, y + 12, fill=cross_color, width=cross_thickness)
 
         # Draw line from last station to this one, starting from the second station
         if i > 0:
@@ -93,3 +105,69 @@ def show_transfers(canvas, station, data):
         f"{t['fromLine']} to {t['toLine']} at {t['toStation'] if t['fromStation'] == station['stationName'] else t['fromStation']}"
         for t in transfers)
     tk.messagebox.showinfo("Transfer Info", transfer_info)
+
+
+def calculate_shortest_path(start, end, graph):
+    """
+    Uses Breadth-First Search (BFS) to find the shortest path between two stations in a subway network.
+    :param start: Starting station name.
+    :param end: Ending station name.
+    :param graph: Graph of the subway system where keys are station names and values are sets of connected stations.
+    :return: List of stations representing the shortest path, or None if no path exists.
+    """
+    if start not in graph or end not in graph:
+        return None
+
+    queue = deque([(start, [start])])  # Queue of tuples (current_station, path_to_station)
+    visited = set()
+
+    while queue:
+        current, path = queue.popleft()
+
+        if current == end:
+            return path
+
+        for neighbor in graph[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
+
+    return None
+
+
+def show_path_results(path, data):
+    """
+    Formats and displays the result of a path search, considering transfers and closed stations.
+    :param path: List of station names forming the path from start to end.
+    :param data: Subway data containing station status and transfer information.
+    """
+    if not path:
+        result = "不可到达。"
+    else:
+        result = ""
+        previous_line = None
+        for i in range(len(path) - 1):
+            current_station = path[i]
+            next_station = path[i + 1]
+
+            # Determine the line of the current connection
+            current_line = None
+            for line in data['lines']:
+                if any(s['stationName'] == current_station for s in line['stations']) and any(
+                        s['stationName'] == next_station for s in line['stations']):
+                    current_line = line['lineName']
+                    break
+
+            if previous_line is None or previous_line != current_line:
+                if result:
+                    result += f"\n{current_line} 线 {current_station} 上，"
+                else:
+                    result += f"乘坐 {current_line} 线 {current_station} 上车，"
+
+            if i == len(path) - 2:
+                result += f"{next_station} 下车"
+
+            previous_line = current_line
+
+    tk.messagebox.showinfo("查询结果", result)
+

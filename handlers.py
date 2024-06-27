@@ -58,16 +58,24 @@ def add_neighboring_station(station, data, canvas, line_id):
         if not new_station_name.strip():
             tk.messagebox.showerror("错误", "站点名称不能为空")
             return
+
+        current_line = next((line for line in data['lines'] if line['lineID'] == line_id), None)
+
+        # 检查是否存在同名站点
+        if any(st['stationName'] == new_station_name for st in current_line['stations']):
+            tk.messagebox.showerror("错误", "当前线路中已存在同名站点，请使用其他名称。")
+            return
+
         # 找到当前站点在data中的位置，并根据选择插入新站点
         for line in data['lines']:
             for idx, st in enumerate(line['stations']):
                 if st['stationName'] == station['stationName']:
                     if position == 'prev':
                         line['stations'].insert(idx, {"stationID": str(idx), "stationName": new_station_name,
-                                                      "lineID": line_id})
+                                                      "lineID": line_id, "status": "open"})
                     else:
                         line['stations'].insert(idx + 1, {"stationID": str(idx + 1), "stationName": new_station_name,
-                                                          "lineID": line_id})
+                                                          "lineID": line_id, "status": "open"})
                     break
         # 更新站点ID
         for line in data['lines']:
@@ -195,7 +203,9 @@ def add_transfer(station, data, canvas, listbox):
 
     def confirm_transfer():
         to_line = next((line for line in data['lines'] if line['lineName'] == line_var.get()), None)
-        if to_line and not any(t['fromStation'] == station['stationName'] and t['toStation'] == station_var.get() for t in data['transfers']):
+        if to_line and not any(
+                t['fromStation'] == station['stationName'] and t['toStation'] == station_var.get() for t in
+                data['transfers']):
             new_transfer = {
                 "fromLine": line_id,
                 "fromStation": station['stationName'],
@@ -204,7 +214,8 @@ def add_transfer(station, data, canvas, listbox):
             }
             data['transfers'].append(new_transfer)
             data_management.save_data()
-            listbox.insert(tk.END, f"{new_transfer['fromLine']} 线 {new_transfer['fromStation']} 到 {new_transfer['toLine']} 线 {new_transfer['toStation']}")
+            listbox.insert(tk.END,
+                           f"{new_transfer['fromLine']} 线 {new_transfer['fromStation']} 到 {new_transfer['toLine']} 线 {new_transfer['toStation']}")
             transfer_window.destroy()
             # 刷新画布以显示更新
             line = data_management.get_line(line_id)
@@ -213,7 +224,6 @@ def add_transfer(station, data, canvas, listbox):
 
     confirm_button = tk.Button(transfer_window, text="确定", command=confirm_transfer)
     confirm_button.pack()
-
 
 
 def delete_transfer(transfers, listbox, data, canvas, line_id):
@@ -239,6 +249,32 @@ def delete_transfer(transfers, listbox, data, canvas, line_id):
                 utils.draw_line(canvas, line, data)
             else:
                 canvas.delete("all")  # 如果线路被删除，则清空 Canvas
+
+
+def toggle_station_status(station, data, canvas, line_id, new_status):
+    # 更改指定站点的状态
+    station['status'] = new_status
+
+    # 找到与此站点有直接换乘关系的所有站点，并更改它们的状态
+    for transfer in data['transfers']:
+        if transfer['fromStation'] == station['stationName'] and transfer['fromLine'] == line_id:
+            # 找到换乘到的站点，并更新状态
+            to_station_info = next((s for l in data['lines'] for s in l['stations'] if s['stationName'] == transfer['toStation'] and s['lineID'] == transfer['toLine']), None)
+            if to_station_info:
+                to_station_info['status'] = new_status
+        elif transfer['toStation'] == station['stationName'] and transfer['toLine'] == line_id:
+            # 找到从哪个站点换乘过来的，并更新状态
+            from_station_info = next((s for l in data['lines'] for s in l['stations'] if s['stationName'] == transfer['fromStation'] and s['lineID'] == transfer['fromLine']), None)
+            if from_station_info:
+                from_station_info['status'] = new_status
+
+    # 保存数据
+    data_management.save_data()
+
+    # 重新绘制线路图以显示状态更新
+    line = data_management.get_line(line_id)
+    if line:
+        utils.draw_line(canvas, line, data)
 
 
 def query_line_info(canvas):

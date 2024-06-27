@@ -5,17 +5,56 @@
             "lineName": "3",
             "stations": [
                 {
-                    "stationID": "1",
+                    "stationID": "0",
                     "stationName": "a",
-                    "lineID": "3"
+                    "lineID": "3",
+                    "status": "open"
+                },
+                {
+                    "stationID": "1",
+                    "stationName": "b",
+                    "lineID": "3",
+                    "status": "closed"
                 },
                 {
                     "stationID": "2",
-                    "stationName": "123",
-                    "lineID": "3"
+                    "stationName": "c",
+                    "lineID": "3",
+                    "status": "open"
+                }
+            ]
+        },
+        {
+            "lineID": "1",
+            "lineName": "一号线",
+            "stations": [
+                {
+                    "stationID": "1",
+                    "stationName": "aa",
+                    "lineID": "1",
+                    "status": "open"
+                },
+                {
+                    "stationID": "2",
+                    "stationName": "b",
+                    "lineID": "1",
+                    "status": "closed"
+                },
+                {
+                    "stationID": "3",
+                    "stationName": "cc",
+                    "lineID": "1",
+                    "status": "open"
                 }
             ]
         }
     ],
-    "transfers": []
+    "transfers": [
+        {
+            "fromLine": "1",
+            "fromStation": "b",
+            "toLine": "3",
+            "toStation": "b"
+        }
+    ]
 }
