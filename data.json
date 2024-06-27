@@ -1,54 +1,18 @@
 {
     "lines": [
         {
-            "lineID": "1",
-            "lineName": "1",
+            "lineID": "3",
+            "lineName": "3",
             "stations": [
                 {
                     "stationID": "1",
-                    "stationName": "1"
+                    "stationName": "a",
+                    "lineID": "3"
                 },
                 {
                     "stationID": "2",
-                    "stationName": "2"
-                },
-                {
-                    "stationID": "3",
-                    "stationName": "3"
-                },
-                {
-                    "stationID": "4",
-                    "stationName": "4"
-                },
-                {
-                    "stationID": "5",
-                    "stationName": "5"
-                }
-            ]
-        },
-        {
-            "lineID": "2",
-            "lineName": "二号线",
-            "stations": [
-                {
-                    "stationID": "1",
-                    "stationName": "1"
-                },
-                {
-                    "stationID": "2",
-                    "stationName": "2"
-                },
-                {
-                    "stationID": "3",
-                    "stationName": "3"
-                },
-                {
-                    "stationID": "4",
-                    "stationName": "4"
-                },
-                {
-                    "stationID": "5",
-                    "stationName": "5"
+                    "stationName": "123",
+                    "lineID": "3"
                 }
             ]
         }

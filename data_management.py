@@ -1,4 +1,3 @@
-# data_management.py
 import json
 import os
 from tkinter import messagebox  # 用于错误提示
@@ -25,29 +24,25 @@ def save_data():
 
 
 def get_data():
-    return data  # Returns the entire data dictionary
+    return data
 
 
 def add_line(line_id, line_name, stations):
-    """Add a new subway line to the data dictionary if the line ID is not already taken."""
     if any(line['lineID'] == line_id for line in data['lines']):
-        # 如果找到重复的ID，显示错误消息并不执行添加操作
         messagebox.showerror("添加错误", f"线路ID {line_id} 已存在。请使用其他ID。")
         return False
     new_line = {
         "lineID": line_id,
         "lineName": line_name,
-        "stations": [{"stationID": str(index + 1), "stationName": name} for index, name in enumerate(stations)]
+        "stations": [{"stationID": str(index + 1), "stationName": name, "lineID": line_id} for index, name in
+                     enumerate(stations)]
     }
     data['lines'].append(new_line)
     return True
 
 
 def get_line(line_id):
-    """Retrieve a line by its ID from the data."""
-    print(f"Looking for line ID: {line_id}")
     for line in data['lines']:
-        print(f"Checking line: {line['lineID']}")
         if line['lineID'] == str(line_id):
             return line
     return None
