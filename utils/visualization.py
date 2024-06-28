@@ -3,7 +3,7 @@ from interaction_handlers.event_handlers import on_right_click
 
 
 # 绘制路线图
-def draw_line(canvas, line, data):
+def draw_line(canvas, line, data, line_menu, line_var):
     from user_interface.dialogs import show_transfers
 
     if not line:
@@ -34,7 +34,7 @@ def draw_line(canvas, line, data):
                            tags=(station_id,))
         canvas.create_text(x, y + 20, text=station['stationName'])
         canvas.tag_bind(station_id, "<Button-3>",
-                        lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID']))
+                        lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID'], line_menu, line_var))
 
         # 修改叉号样式：更粗的线条和红色
         cross_thickness = 2  # 线条粗细

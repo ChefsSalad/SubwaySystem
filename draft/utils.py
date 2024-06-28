@@ -1,17 +1,16 @@
 # utils.py
 import tkinter as tk
-from tkinter import simpledialog, Toplevel, Radiobutton, Label, Entry, Button
 from collections import deque
 import data_management
 import utils
-from handlers import add_neighboring_station, delete_station, view_transfers, toggle_station_status
+from draft.handlers import add_neighboring_station, delete_station, view_transfers, toggle_station_status
 
 
 # 右键菜单栏
-def on_right_click(event, station, canvas, data, line_id):
+def on_right_click(event, station, canvas, data, line_id, line_menu, line_var):
     # 创建一个简单的右键菜单
     menu = tk.Menu(canvas, tearoff=0)
-    menu.add_command(label="增加邻近站点", command=lambda: add_neighboring_station(station, data, canvas, line_id))
+    menu.add_command(label="增加邻近站点", command=lambda: add_neighboring_station(station, data, canvas, line_id, line_menu, line_var))
     menu.add_command(label="删除该站点", command=lambda: delete_station(station, data, canvas, line_id))
     menu.add_command(label="查看换乘情况", command=lambda: view_transfers(station, data, canvas))  # 新增查看换乘情况
     if station.get('status') == 'open':
@@ -65,7 +64,7 @@ def draw_line(canvas, line, data):
                            tags=(station_id,))
         canvas.create_text(x, y + 20, text=station['stationName'])
         canvas.tag_bind(station_id, "<Button-3>",
-                        lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID']))
+                        lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID'], line_menu, line_var))
 
         # 修改叉号样式：更粗的线条和红色
         cross_thickness = 2  # 线条粗细

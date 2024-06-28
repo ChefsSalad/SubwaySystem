@@ -1,10 +1,9 @@
 # ui.py
 import tkinter as tk
-from tkinter import simpledialog, messagebox
-from tkinter import simpledialog, messagebox, Toplevel, Label, Button, OptionMenu, StringVar
+from tkinter import Toplevel, Label, Button, OptionMenu, StringVar
 
 import utils
-from handlers import add_line_window, query_line_info, exit_application
+from draft.handlers import add_line_window, query_line_info, exit_application
 import data_management
 
 

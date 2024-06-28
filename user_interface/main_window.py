@@ -2,46 +2,32 @@ import tkinter as tk
 from tkinter import messagebox
 
 from data_management.data_operations import get_data, build_graph, get_line
+from interaction_handlers.command_functions import update_line_dropdown
 from pathfinding.shortest_path import calculate_shortest_path, show_path_results
 from user_interface.dialogs import add_line_window
 from utils.visualization import exit_application, draw_line
 
 
-global UI_COMPONENTS
-UI_COMPONENTS = {}
-
-
 def setup_main_window(root):
-    # 创建画布，用于绘制地铁线路图
     canvas = tk.Canvas(root, width=800, height=300)
     canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-    # 创建一个框架以包含控制按钮
     frame = tk.Frame(root)
     frame.pack(side=tk.TOP, fill=tk.X)
 
-    # 获取所有线路名称和ID
-    line_options = [(line['lineName'], line['lineID']) for line in get_data()['lines']]
-    line_var = tk.StringVar()
-    line_var.set('请选择线路')  # 初始提示，不选择任何实际线路
-
-    if line_options:  # 检查列表是否为空
-        # 创建带有初始提示的下拉菜单，并包括所有线路名称
-        line_menu = tk.OptionMenu(frame, line_var, '请选择线路', *(option[0] for option in line_options))
-    else:
-        # 如果没有线路，只显示一个默认的无效选项
-        line_menu = tk.OptionMenu(frame, line_var, '无可用线路')
-
+    line_var = tk.StringVar(value='请选择线路')
+    # 注意：初始化下拉菜单时先不添加任何实际选项
+    line_menu = tk.OptionMenu(frame, line_var, '请选择线路')
     line_menu.pack(side=tk.LEFT, padx=5, pady=5)
 
-    UI_COMPONENTS['line_menu'] = line_menu
-    UI_COMPONENTS['line_var'] = line_var
+    # 确保所有必要的 UI 组件已经创建并存储后，再更新下拉菜单
+    update_line_dropdown(line_menu, line_var)  # 更新下拉菜单
 
-    btn_query_line = tk.Button(frame, text="查询线路", command=lambda: query_line_info(canvas, line_var, line_options))
+    btn_query_line = tk.Button(frame, text="查询线路", command=lambda: query_line_info(canvas, line_var, line_menu))
     btn_query_line.pack(side=tk.LEFT, padx=5, pady=5)
 
     # 添加线路按钮
-    btn_add_line = tk.Button(frame, text="添加线路", command=add_line_window)
+    btn_add_line = tk.Button(frame, text="添加线路", command=lambda: add_line_window(line_menu, line_var))
     btn_add_line.pack(side=tk.LEFT, padx=5, pady=5)
 
     # 查询最短路径的按钮
@@ -116,19 +102,33 @@ def setup_path_query_window(data):
 
 
 # 根据用户的选择在画布上显示选中的线路信息
-def query_line_info(canvas, line_var, line_options):
-    """Use the selected line from the dropdown to display on the canvas."""
-    line_name = line_var.get()
-    line_id = next((line_id for line_name, line_id in line_options if line_name == line_var.get()), None)
+def query_line_info(canvas, line_var, line_menu):
+    try:
+        # 获取下拉菜单的当前选项
+        selected_line_name = line_var.get()
+        print(f"Selected Line Name: {selected_line_name}")  # 调试输出选中的线路名称
 
-    if line_id:
-        line = get_line(line_id)
-        if line:
-            draw_line(canvas, line, get_data())
+        # 获取所有线路选项（假设这些选项是在 setup_main_window 中设置的）
+        line_options = [(line['lineName'], line['lineID']) for line in get_data()['lines']]
+        print(f"Line Options: {line_options}")  # 调试输出所有线路选项
+
+        # 根据选中的线路名称查找对应的线路 ID
+        line_id = next((line_id for line_name, line_id in line_options if line_name == selected_line_name), None)
+        print(f"Line ID: {line_id}")  # 调试输出找到的线路 ID
+
+        if line_id is not None:
+            # 如果找到了线路 ID，继续处理（例如绘制线路图）
+            line = get_line(line_id)
+            if line:
+                draw_line(canvas, line, get_data(), line_menu, line_var)
+            else:
+                messagebox.showerror("Error", "Line not found.")
         else:
-            messagebox.showerror("Error", "Line not found.")
-    else:
-        messagebox.showerror("Error", "Invalid line selection.")
+            messagebox.showerror("Error", "Invalid line selection.")
+    except Exception as e:
+        # 错误处理
+        messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
 
 
 if __name__ == "__main__":

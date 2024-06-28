@@ -8,7 +8,7 @@ from utils.visualization import draw_line
 
 
 # 创建添加新线路的窗口，包括输入字段和提交按钮
-def add_line_window():
+def add_line_window(line_menu, line_var):
     window = Toplevel()
     window.title("添加新线路")
 
@@ -27,12 +27,12 @@ def add_line_window():
 
     # 确保传递 line_menu 和 line_var 到提交函数
     submit_btn = Button(window, text="提交", command=lambda: submit_new_line(
-        line_id_entry.get(), line_name_entry.get(), stations_entry.get(), window))
+        line_id_entry.get(), line_name_entry.get(), stations_entry.get(), window, line_menu, line_var))
     submit_btn.pack()
 
 
 # 展示一个站点的换乘情况
-def view_transfers(station, data, canvas):
+def view_transfers(station, data, canvas, line_menu, line_var):
     window = tk.Toplevel()
     window.title(f"换乘情况 - {station['stationName']}")
 
@@ -50,22 +50,22 @@ def view_transfers(station, data, canvas):
 
     # 删除和添加换乘站的按钮
     delete_button = tk.Button(window, text="删除该换乘站",
-                              command=lambda: delete_transfer(transfers, listbox, data, canvas, station['lineID']))
+                              command=lambda: delete_transfer(transfers, listbox, data, canvas, station['lineID'], line_menu, line_var))
     delete_button.pack(side=tk.LEFT)
     add_button = tk.Button(window, text="添加换乘站", command=lambda: add_transfer(station, data, canvas, listbox))
     add_button.pack(side=tk.RIGHT)
 
     # 这里还需要确保更新画布后显示正确的线路
     listbox.bind('<<ListboxSelect>>',
-                 lambda event: update_canvas_on_select(event, canvas, data, station['lineID']))
+                 lambda event: update_canvas_on_select(event, canvas, data, station['lineID'], line_menu, line_var))
 
 
 # 重新刷新地铁路线图
-def update_canvas_on_select(event, canvas, data, line_id):
+def update_canvas_on_select(event, canvas, data, line_id, line_menu, line_var):
     # 当选中列表中的项时，重新绘制相关线路
     line = get_line(line_id)
     if line:
-        draw_line(canvas, line, data)
+        draw_line(canvas, line, data, line_menu, line_var)
 
 
 # 展示换乘站点的信息

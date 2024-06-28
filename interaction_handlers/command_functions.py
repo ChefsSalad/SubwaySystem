@@ -6,7 +6,7 @@ import re  # 导入正则表达式库
 
 
 # 添加邻近站点
-def add_neighboring_station(station, data, canvas, line_id):
+def add_neighboring_station(station, data, canvas, line_id, line_menu, line_var):
     def submit():
         new_station_name = entry.get()
         position = var.get()
@@ -44,7 +44,7 @@ def add_neighboring_station(station, data, canvas, line_id):
         # 更新数据后重新绘制线路
         line = get_line(line_id)
         if line:
-            draw_line(canvas, line, data)
+            draw_line(canvas, line, data, line_menu, line_var)
 
     window = Toplevel()
     window.title("增加邻近站点")
@@ -61,7 +61,7 @@ def add_neighboring_station(station, data, canvas, line_id):
 
 
 # 删除站点
-def delete_station(station, data, canvas, line_id):
+def delete_station(station, data, canvas, line_id, line_menu, line_var):
     response = tk.messagebox.askyesno("确认删除", f"您确定要删除站点{station['stationName']}吗？")
     if response:
         # 从data中找到并删除站点
@@ -89,14 +89,14 @@ def delete_station(station, data, canvas, line_id):
         # 更新数据后重新绘制线路
         line = get_line(line_id)
         if line:
-            draw_line(canvas, line, data)
+            draw_line(canvas, line, data, line_menu, line_var)
         else:
             canvas.delete("all")  # 如果线路被删除，则清空 Canvas
-            update_line_dropdown(line_menu, data)
+            update_line_dropdown(line_menu, line_var)
 
 
 # 开放关闭站点
-def toggle_station_status(station, data, canvas, line_id, new_status):
+def toggle_station_status(station, data, canvas, line_id, new_status, line_menu, line_var):
     # 更改指定站点的状态
     station['status'] = new_status
 
@@ -123,7 +123,7 @@ def toggle_station_status(station, data, canvas, line_id, new_status):
     # 重新绘制线路图以显示状态更新
     line = get_line(line_id)
     if line:
-        draw_line(canvas, line, data)
+        draw_line(canvas, line, data, line_menu, line_var)
 
 
 # 添加换乘站点
@@ -182,14 +182,14 @@ def add_transfer(station, data, canvas, listbox):
             # 刷新画布以显示更新
             line = get_line(line_id)
             if line:
-                draw_line(canvas, line, data)
+                draw_line(canvas, line, data, line_menu, line_var)
 
     confirm_button = tk.Button(transfer_window, text="确定", command=confirm_transfer)
     confirm_button.pack()
 
 
 # 删除换乘站点
-def delete_transfer(transfers, listbox, data, canvas, line_id):
+def delete_transfer(transfers, listbox, data, canvas, line_id, line_menu, line_var):
     selected = listbox.curselection()
     if selected:
         index = selected[0]
@@ -209,16 +209,13 @@ def delete_transfer(transfers, listbox, data, canvas, line_id):
             # 更新数据后重新绘制线路
             line = get_line(line_id)
             if line:
-                draw_line(canvas, line, data)
+                draw_line(canvas, line, data, line_menu, line_var)
             else:
                 canvas.delete("all")  # 如果线路被删除，则清空 Canvas
 
 
 # 处理添加新线路
-def submit_new_line(line_id, line_name, stations, window):
-    from user_interface.main_window import UI_COMPONENTS
-    line_menu = UI_COMPONENTS.get('line_menu')
-    line_var = UI_COMPONENTS.get('line_var')
+def submit_new_line(line_id, line_name, stations, window, line_menu, line_var):
 
     if line_menu is not None:
         update_line_dropdown(line_menu, line_var)
@@ -241,20 +238,18 @@ def submit_new_line(line_id, line_name, stations, window):
         pass
 
 
-# 更新下拉框
-def update_line_dropdown(line_menu, data):
-    from user_interface.main_window import UI_COMPONENTS
+def update_line_dropdown(line_menu, line_var):
+    data = get_data()  # 假设 get_data() 在某个模块中定义，如 data_management
 
-    line_menu = UI_COMPONENTS.get('line_menu')
-    line_var = UI_COMPONENTS.get('line_var')
 
-    try:
-        menu = line_menu['menu']
-        menu.delete(0, 'end')  # 删除旧的菜单项
-        line_options = [line['lineName'] for line in data['lines']]
+    menu = line_menu['menu']
+    menu.delete(0, 'end')  # 删除旧的菜单项
+
+    line_options = [(line['lineName'], line['lineID']) for line in data['lines']]
+    if line_options:
         for option in line_options:
-            menu.add_command(label=option, command=lambda value=option: line_menu.setvar(value))
-        if line_options:
-            line_menu.setvar(line_options[0])  # 默认选择第一个线路
-    except Exception as e:
-        messagebox.showerror("Error", f"Failed to update line dropdown: {e}")
+            menu.add_command(label=option[0], command=lambda value=option[0]: line_var.set(value))
+        line_var.set('请选择线路')  # 设置初始提示
+    else:
+        line_var.set('无可用线路')
+        menu.add_command(label='无可用线路', command=lambda: line_var.set('无可用线路'))

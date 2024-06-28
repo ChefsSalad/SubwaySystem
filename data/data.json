@@ -113,18 +113,6 @@
                     "status": "open"
                 }
             ]
-        },
-        {
-            "lineID": "10",
-            "lineName": "10",
-            "stations": [
-                {
-                    "stationID": "1",
-                    "stationName": "1",
-                    "lineID": "10",
-                    "status": "open"
-                }
-            ]
         }
     ],
     "transfers": [
