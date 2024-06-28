@@ -1,33 +1,5 @@
-import json
-import os
-from tkinter import messagebox  # 用于错误提示
-
-data_path = 'data.json'
-data = {
-    "lines": [],
-    "transfers": []
-}
-
-
-def load_data():
-    global data
-    if not os.path.exists(data_path):
-        save_data()  # 如果文件不存在，则创建一个新文件
-    else:
-        with open(data_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-
-
-def save_data():
-    global data
-    # 在保存前按线路ID排序
-    data['lines'].sort(key=lambda line: int(line['lineID']))
-    with open(data_path, 'w', encoding='utf-8') as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
-        # messagebox.showinfo("保存数据", "数据已成功保存！")
-
-def get_data():
-    return data
+from tkinter import messagebox
+from .data_io import data, save_data
 
 
 def add_line(line_id, line_name, stations):
@@ -38,8 +10,7 @@ def add_line(line_id, line_name, stations):
         "lineID": line_id,
         "lineName": line_name,
         "stations": [{"stationID": str(index + 1), "stationName": name, "lineID": line_id, "status": "open"} for
-                     index, name in
-                     enumerate(stations)]
+                     index, name in enumerate(stations)]
     }
     data['lines'].append(new_line)
     return True
@@ -85,5 +56,5 @@ def build_graph(data):
     return graph
 
 
-
-
+def get_data():
+    return data

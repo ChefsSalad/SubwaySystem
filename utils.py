@@ -7,6 +7,7 @@ import utils
 from handlers import add_neighboring_station, delete_station, view_transfers, toggle_station_status
 
 
+# 右键菜单栏
 def on_right_click(event, station, canvas, data, line_id):
     # 创建一个简单的右键菜单
     menu = tk.Menu(canvas, tearoff=0)
@@ -22,6 +23,7 @@ def on_right_click(event, station, canvas, data, line_id):
     menu.post(event.x_root, event.y_root)
 
 
+# 重新刷新地铁路线图
 def update_canvas_on_select(event, canvas, data, line_id):
     # 当选中列表中的项时，重新绘制相关线路
     line = data_management.get_line(line_id)
@@ -29,6 +31,7 @@ def update_canvas_on_select(event, canvas, data, line_id):
         utils.draw_line(canvas, line, data)
 
 
+# 绘制地铁图
 def draw_line(canvas, line, data):
     """
     Draw the subway line on the canvas, wrapping into S-shape if it extends beyond the canvas width.
@@ -95,6 +98,7 @@ def draw_line(canvas, line, data):
                             lambda event, s=station: show_transfers(canvas, s, data))
 
 
+# 展示换乘站点的信息
 def show_transfers(canvas, station, data):
     """
     Show transfer details for the clicked station.
@@ -107,6 +111,7 @@ def show_transfers(canvas, station, data):
     tk.messagebox.showinfo("Transfer Info", transfer_info)
 
 
+# 执行最短路径计算
 def calculate_shortest_path(start, end, graph):
     """
     Uses Breadth-First Search (BFS) to find the shortest path between two stations in a subway network.
@@ -135,6 +140,7 @@ def calculate_shortest_path(start, end, graph):
     return None
 
 
+# 显示路径查询结果
 def show_path_results(path, data):
     """
     Formats and displays the result of a path search, considering transfers and closed stations.

@@ -1,25 +1,13 @@
 {
     "lines": [
         {
-            "lineID": "3",
-            "lineName": "3",
+            "lineID": "0",
+            "lineName": "零号线",
             "stations": [
                 {
-                    "stationID": "0",
-                    "stationName": "a",
-                    "lineID": "3",
-                    "status": "open"
-                },
-                {
                     "stationID": "1",
-                    "stationName": "b",
-                    "lineID": "3",
-                    "status": "closed"
-                },
-                {
-                    "stationID": "2",
-                    "stationName": "c",
-                    "lineID": "3",
+                    "stationName": "尼伯龙根",
+                    "lineID": "0",
                     "status": "open"
                 }
             ]
@@ -44,6 +32,48 @@
                     "stationID": "3",
                     "stationName": "cc",
                     "lineID": "1",
+                    "status": "open"
+                }
+            ]
+        },
+        {
+            "lineID": "2",
+            "lineName": "二号线",
+            "stations": [
+                {
+                    "stationID": "1",
+                    "stationName": "虹桥火车站",
+                    "lineID": "2",
+                    "status": "open"
+                },
+                {
+                    "stationID": "2",
+                    "stationName": "徐家汇",
+                    "lineID": "2",
+                    "status": "open"
+                }
+            ]
+        },
+        {
+            "lineID": "3",
+            "lineName": "3",
+            "stations": [
+                {
+                    "stationID": "0",
+                    "stationName": "a",
+                    "lineID": "3",
+                    "status": "open"
+                },
+                {
+                    "stationID": "1",
+                    "stationName": "b",
+                    "lineID": "3",
+                    "status": "closed"
+                },
+                {
+                    "stationID": "2",
+                    "stationName": "c",
+                    "lineID": "3",
                     "status": "open"
                 }
             ]

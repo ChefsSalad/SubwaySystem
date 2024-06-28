@@ -7,6 +7,7 @@ import utils
 from handlers import add_line_window, query_line_info, exit_application
 import data_management
 
+
 def setup_main_window(root):
     """
     Setup the main window with a canvas for drawing subway lines and buttons for various actions.
@@ -19,13 +20,21 @@ def setup_main_window(root):
     frame = tk.Frame(root)
     frame.pack(side=tk.TOP, fill=tk.X)
 
+    # 获取所有线路名称和ID
+    line_options = [(line['lineName'], line['lineID']) for line in data_management.get_data()['lines']]
+    line_var = tk.StringVar()
+    line_var.set(line_options[0][0])  # 默认选择第一个线路
+
+    # 下拉菜单选择线路
+    line_menu = tk.OptionMenu(frame, line_var, *[option[0] for option in line_options])
+    line_menu.pack(side=tk.LEFT, padx=5, pady=5)
+
+    btn_query_line = tk.Button(frame, text="查询线路", command=lambda: query_line_info(canvas, line_var, line_options))
+    btn_query_line.pack(side=tk.LEFT, padx=5, pady=5)
+
     # 添加线路按钮
     btn_add_line = tk.Button(frame, text="添加线路", command=add_line_window)
     btn_add_line.pack(side=tk.LEFT, padx=5, pady=5)
-
-    # 查询线路按钮
-    btn_query_line = tk.Button(frame, text="查询线路", command=lambda: query_line_info(canvas))
-    btn_query_line.pack(side=tk.LEFT, padx=5, pady=5)
 
     # 查询最短路径的按钮
     btn_query_path = tk.Button(frame, text="查询路径",
@@ -76,7 +85,8 @@ def setup_path_query_window(data):
         menu = station_menu["menu"]
         menu.delete(0, 'end')
         for station in selected_line['stations']:
-            menu.add_command(label=station['stationName'], command=lambda value=station['stationName']: station_var.set(value))
+            menu.add_command(label=station['stationName'],
+                             command=lambda value=station['stationName']: station_var.set(value))
 
     # 绑定更新函数到线路变量
     start_line_var.trace('w', lambda *args: update_station_menu(start_line_var, start_station_var, start_station_menu))
