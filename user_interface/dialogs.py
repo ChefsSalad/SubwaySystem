@@ -52,7 +52,7 @@ def view_transfers(station, data, canvas, line_menu, line_var):
     delete_button = tk.Button(window, text="删除该换乘站",
                               command=lambda: delete_transfer(transfers, listbox, data, canvas, station['lineID'], line_menu, line_var))
     delete_button.pack(side=tk.LEFT)
-    add_button = tk.Button(window, text="添加换乘站", command=lambda: add_transfer(station, data, canvas, listbox))
+    add_button = tk.Button(window, text="添加换乘站", command=lambda: add_transfer(station, data, canvas, listbox, line_menu, line_var))
     add_button.pack(side=tk.RIGHT)
 
     # 这里还需要确保更新画布后显示正确的线路

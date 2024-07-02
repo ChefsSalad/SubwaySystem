@@ -10,54 +10,62 @@ def add_neighboring_station(station, data, canvas, line_id, line_menu, line_var)
     def submit():
         new_station_name = entry.get()
         position = var.get()
-        # 确保输入不为空
+        # Ensure input is not empty
         if not new_station_name.strip():
-            tk.messagebox.showerror("错误", "站点名称不能为空")
+            tk.messagebox.showerror("Error", "Station name cannot be empty")
             return
 
         current_line = next((line for line in data['lines'] if line['lineID'] == line_id), None)
 
-        # 检查是否存在同名站点
+        # Check for duplicate station names
         if any(st['stationName'] == new_station_name for st in current_line['stations']):
-            tk.messagebox.showerror("错误", "当前线路中已存在同名站点，请使用其他名称。")
+            tk.messagebox.showerror("Error", "A station with the same name already exists on this line. Please use a different name.")
             return
 
-        # 找到当前站点在data中的位置，并根据选择插入新站点
+        # Find the current station in data and insert the new station based on selected position
         for line in data['lines']:
             for idx, st in enumerate(line['stations']):
                 if st['stationName'] == station['stationName']:
+                    time_weight = 1  # Default time weight if not specified
+                    new_station = {"stationID": str(idx + 1), "stationName": new_station_name, "lineID": line_id, "status": "open", "timeToNext": time_weight}
                     if position == 'prev':
-                        line['stations'].insert(idx, {"stationID": str(idx), "stationName": new_station_name,
-                                                      "lineID": line_id, "status": "open"})
+                        # Adjust time weights accordingly
+                        if idx > 0:
+                            new_station['timeToNext'] = line['stations'][idx - 1]['timeToNext']
+                            line['stations'][idx - 1]['timeToNext'] = time_weight
+                        line['stations'].insert(idx, new_station)
                     else:
-                        line['stations'].insert(idx + 1, {"stationID": str(idx + 1), "stationName": new_station_name,
-                                                          "lineID": line_id, "status": "open"})
+                        if idx < len(line['stations']) - 1:
+                            new_station['timeToNext'] = line['stations'][idx]['timeToNext']
+                        line['stations'][idx]['timeToNext'] = time_weight
+                        line['stations'].insert(idx + 1, new_station)
                     break
-        # 更新站点ID
+
+        # Update station IDs
         for line in data['lines']:
             for idx, st in enumerate(line['stations']):
-                st['stationID'] = str(idx)
-        # 保存数据
+                st['stationID'] = str(idx + 1)
+        # Save data
         save_data()
         window.destroy()
 
-        # 更新数据后重新绘制线路
+        # Redraw the line after data update
         line = get_line(line_id)
         if line:
             draw_line(canvas, line, data, line_menu, line_var)
 
     window = Toplevel()
-    window.title("增加邻近站点")
+    window.title("Add Neighboring Station")
 
     var = tk.StringVar(value="next")
-    tk.Radiobutton(window, text="增加上一站", variable=var, value="prev").pack()
-    tk.Radiobutton(window, text="增加下一站", variable=var, value="next").pack()
+    tk.Radiobutton(window, text="Add Previous Station", variable=var, value="prev").pack()
+    tk.Radiobutton(window, text="Add Next Station", variable=var, value="next").pack()
 
-    Label(window, text="站点名称:").pack()
+    Label(window, text="Station Name:").pack()
     entry = Entry(window)
     entry.pack()
 
-    Button(window, text="提交", command=submit).pack()
+    Button(window, text="Submit", command=submit).pack()
 
 
 # 删除站点
@@ -127,42 +135,38 @@ def toggle_station_status(station, data, canvas, line_id, new_status, line_menu,
 
 
 # 添加换乘站点
-def add_transfer(station, data, canvas, listbox):
-    line_id = station['lineID']  # 直接从站点数据中获取 lineID
+def add_transfer(station, data, canvas, listbox, line_menu, line_var):
+    line_id = station['lineID']  # Directly obtain lineID from station data
     transfer_window = tk.Toplevel()
-    transfer_window.title("添加换乘站")
+    transfer_window.title("Add Transfer Station")
 
     main_frame = tk.Frame(transfer_window)
     main_frame.pack(fill=tk.BOTH, expand=True)
 
-    # 下拉菜单选择线路，排除当前站点所在的线路
+    # Dropdown menu to select a line, excluding the current station's line
     line_var = tk.StringVar(transfer_window)
     line_options = [line['lineName'] for line in data['lines'] if line['lineID'] != line_id]
-    if line_options:  # 确保至少有一个选项可用
-        line_menu = tk.OptionMenu(main_frame, line_var, *line_options)
-    else:
-        line_menu = tk.OptionMenu(main_frame, line_var, "无可用线路")
+    line_menu = OptionMenu(main_frame, line_var, *line_options) if line_options else OptionMenu(main_frame, line_var, "No available lines")
     line_menu.pack()
 
-    # 下拉菜单选择站点，初始化为空
+    # Dropdown menu for station selection, initially empty
     station_var = tk.StringVar(transfer_window)
-    station_menu = tk.OptionMenu(main_frame, station_var, "选择站点")
+    station_menu = OptionMenu(main_frame, station_var, "Select a station")
     station_menu.pack()
 
-    # 更新站点菜单的函数
+    # Function to update the station menu based on the selected line
     def update_station_menu(*args):
         selected_line = next((line for line in data['lines'] if line['lineName'] == line_var.get()), None)
+        station_menu['menu'].delete(0, 'end')
         if selected_line:
-            station_options = [st['stationName'] for st in selected_line['stations']]
-            station_menu['menu'].delete(0, 'end')
-            for station_name in station_options:
-                station_menu['menu'].add_command(label=station_name, command=tk._setit(station_var, station_name))
+            for station in selected_line['stations']:
+                station_menu['menu'].add_command(label=station['stationName'], command=lambda value=station['stationName']: station_var.set(value))
         else:
-            station_menu['menu'].delete(0, 'end')
-            station_menu['menu'].add_command(label="无站点", command=tk._setit(station_var, "无站点"))
+            station_menu['menu'].add_command(label="No stations", command=lambda: station_var.set("No stations"))
 
-    line_var.trace('w', update_station_menu)  # 当选中的线路变化时更新站点选项
+    line_var.trace('w', update_station_menu)
 
+    # Confirm transfer addition
     def confirm_transfer():
         to_line = next((line for line in data['lines'] if line['lineName'] == line_var.get()), None)
         if to_line and not any(
@@ -177,14 +181,14 @@ def add_transfer(station, data, canvas, listbox):
             data['transfers'].append(new_transfer)
             save_data()
             listbox.insert(tk.END,
-                           f"{new_transfer['fromLine']} 线 {new_transfer['fromStation']} 到 {new_transfer['toLine']} 线 {new_transfer['toStation']}")
+                           f"{new_transfer['fromLine']} line {new_transfer['fromStation']} to {new_transfer['toLine']} line {new_transfer['toStation']}")
             transfer_window.destroy()
-            # 刷新画布以显示更新
+            # Refresh the canvas to display the update
             line = get_line(line_id)
             if line:
                 draw_line(canvas, line, data, line_menu, line_var)
 
-    confirm_button = tk.Button(transfer_window, text="确定", command=confirm_transfer)
+    confirm_button = tk.Button(transfer_window, text="Confirm", command=confirm_transfer)
     confirm_button.pack()
 
 
@@ -212,6 +216,7 @@ def delete_transfer(transfers, listbox, data, canvas, line_id, line_menu, line_v
                 draw_line(canvas, line, data, line_menu, line_var)
             else:
                 canvas.delete("all")  # 如果线路被删除，则清空 Canvas
+                update_line_dropdown(line_menu, line_var)
 
 
 # 处理添加新线路

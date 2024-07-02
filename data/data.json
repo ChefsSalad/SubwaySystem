@@ -8,13 +8,8 @@
                     "stationID": "1",
                     "stationName": "aa",
                     "lineID": "1",
-                    "status": "open"
-                },
-                {
-                    "stationID": "2",
-                    "stationName": "b",
-                    "lineID": "1",
-                    "status": "open"
+                    "status": "open",
+                    "weight": 1
                 }
             ]
         },
@@ -26,43 +21,22 @@
                     "stationID": "1",
                     "stationName": "虹桥火车站",
                     "lineID": "2",
-                    "status": "open"
+                    "status": "open",
+                    "weight": 1
                 },
                 {
                     "stationID": "2",
                     "stationName": "测试点1",
                     "lineID": "2",
-                    "status": "open"
+                    "status": "open",
+                    "weight": 1
                 },
                 {
                     "stationID": "3",
                     "stationName": "徐家汇",
                     "lineID": "2",
-                    "status": "open"
-                }
-            ]
-        },
-        {
-            "lineID": "3",
-            "lineName": "3",
-            "stations": [
-                {
-                    "stationID": "1",
-                    "stationName": "a",
-                    "lineID": "3",
-                    "status": "open"
-                },
-                {
-                    "stationID": "2",
-                    "stationName": "b",
-                    "lineID": "3",
-                    "status": "open"
-                },
-                {
-                    "stationID": "3",
-                    "stationName": "c",
-                    "lineID": "3",
-                    "status": "open"
+                    "status": "open",
+                    "weight": -1
                 }
             ]
         },
@@ -74,19 +48,22 @@
                     "stationID": "1",
                     "stationName": "测试点1",
                     "lineID": "4",
-                    "status": "open"
+                    "status": "open",
+                    "nextWeight": 1
                 },
                 {
                     "stationID": "2",
                     "stationName": "测试点2",
                     "lineID": "4",
-                    "status": "open"
+                    "status": "open",
+                    "weight": 1
                 },
                 {
                     "stationID": "3",
                     "stationName": "测试点3",
                     "lineID": "4",
-                    "status": "open"
+                    "status": "open",
+                    "weight": -1
                 }
             ]
         },
@@ -98,29 +75,33 @@
                     "stationID": "1",
                     "stationName": "松江1",
                     "lineID": "5",
-                    "status": "open"
+                    "status": "open",
+                    "weight": 1
                 },
                 {
                     "stationID": "2",
                     "stationName": "松江2",
                     "lineID": "5",
-                    "status": "open"
+                    "status": "open",
+                    "weight": 1
                 },
                 {
                     "stationID": "3",
                     "stationName": "松江3",
                     "lineID": "5",
-                    "status": "open"
+                    "status": "open",
+                    "weight": -1
                 }
             ]
         }
     ],
     "transfers": [
         {
-            "fromLine": "1",
-            "fromStation": "b",
-            "toLine": "3",
-            "toStation": "b"
+            "fromLine": "4",
+            "fromStation": "测试点1",
+            "toLine": "2",
+            "toStation": "测试点1",
+            "weight": 1
         }
     ]
 }
