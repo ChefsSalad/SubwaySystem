@@ -295,3 +295,56 @@ def update_line_dropdown(line_menu, line_var):
     else:
         line_var.set('无可用线路')
         menu.add_command(label='无可用线路', command=lambda: line_var.set('无可用线路'))
+
+
+def modify_path(station, data, canvas, line_id):
+    window = tk.Toplevel()
+    window.title("修改路径权重")
+
+    frame = tk.Frame(window)
+    frame.pack(padx=10, pady=10)
+
+    # 获取当前线路信息
+    line = next((l for l in data['lines'] if l['lineID'] == line_id), None)
+    if not line:
+        tk.messagebox.showerror("错误", "线路数据未找到。")
+        return
+
+    # 找到当前站点在线路中的索引
+    index = next((idx for idx, s in enumerate(line['stations']) if s['stationName'] == station['stationName']), None)
+    if index is None:
+        tk.messagebox.showerror("错误", "站点未在当前线路中找到。")
+        return
+
+    # 单选按钮选择修改前一站或后一站的权重
+    direction_var = tk.StringVar(value="next")  # 默认选择“后一站”
+
+    if index > 0:  # 如果不是第一站，允许选择“前一站”
+        tk.Radiobutton(frame, text="修改到前一站的权重", variable=direction_var, value="prev").pack(anchor='w')
+    if index < len(line['stations']) - 1:  # 如果不是最后一站，允许选择“后一站”
+        tk.Radiobutton(frame, text="修改到后一站的权重", variable=direction_var, value="next").pack(anchor='w')
+
+    # 权重输入框
+    tk.Label(frame, text="输入新的权重：").pack()
+    weight_entry = tk.Entry(frame)
+    weight_entry.pack()
+
+    # 提交按钮，更新权重
+    def submit_weight_update():
+        new_weight = weight_entry.get()
+        if not new_weight.isdigit():
+            tk.messagebox.showerror("错误", "权重必须为数字。")
+            return
+        new_weight = int(new_weight)
+        if direction_var.get() == "prev" and index > 0:
+            line['stations'][index - 1]['nextWeight'] = new_weight
+        elif direction_var.get() == "next" and index < len(line['stations']) - 1:
+            line['stations'][index]['nextWeight'] = new_weight
+        save_data()  # 保存数据
+        window.destroy()
+        draw_line(canvas, line, data, None, None)  # 重绘线路图
+
+    submit_button = tk.Button(frame, text="提交", command=submit_weight_update)
+    submit_button.pack()
+
+    window.mainloop()

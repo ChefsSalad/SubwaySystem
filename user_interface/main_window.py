@@ -3,7 +3,8 @@ from tkinter import messagebox
 
 from data_management.data_operations import get_data, build_graph, get_line
 from interaction_handlers.command_functions import update_line_dropdown
-from pathfinding.shortest_path import calculate_shortest_path, show_path_results
+from pathfinding.shortest_path import show_path_results, calculate_shortest_time_path, \
+    calculate_least_transfers_path
 from user_interface.dialogs import add_line_window
 from utils.visualization import exit_application, draw_line
 
@@ -30,21 +31,19 @@ def setup_main_window(root):
     btn_add_line = tk.Button(frame, text="添加线路", command=lambda: add_line_window(line_menu, line_var))
     btn_add_line.pack(side=tk.LEFT, padx=5, pady=5)
 
-    # 查询最短路径的按钮
-    btn_query_path = tk.Button(frame, text="查询路径",
-                               command=lambda: setup_path_query_window(get_data()))
-    btn_query_path.pack(side=tk.LEFT, padx=5, pady=5)
+    # 新增查询最短时间路径按钮
+    btn_query_shortest_time = tk.Button(frame, text="查询最短路径",
+                                        command=lambda: setup_path_query_window(get_data()))
+    btn_query_shortest_time.pack(side=tk.LEFT, padx=5, pady=5)
 
-    # 退出按钮
     btn_exit = tk.Button(frame, text="退出", command=exit_application)
     btn_exit.pack(side=tk.LEFT, padx=5, pady=5)
 
 
 def setup_path_query_window(data):
     window = tk.Toplevel()
-    window.title("查询最短路径")
+    window.title("查询路径选项")
 
-    # 创建标签和下拉菜单框架
     frame = tk.Frame(window)
     frame.pack(padx=10, pady=10)
 
@@ -53,6 +52,7 @@ def setup_path_query_window(data):
     start_station_var = tk.StringVar(window)
     end_line_var = tk.StringVar(window)
     end_station_var = tk.StringVar(window)
+    query_type_var = tk.StringVar(window, value='最短时间')
 
     # 线路选择下拉菜单
     start_line_menu = tk.OptionMenu(frame, start_line_var, *(line['lineName'] for line in data['lines']))
@@ -60,27 +60,24 @@ def setup_path_query_window(data):
     end_line_menu = tk.OptionMenu(frame, end_line_var, *(line['lineName'] for line in data['lines']))
     end_line_menu.grid(row=1, column=1, padx=10, pady=10)
 
-    tk.Label(frame, text="起始线路:").grid(row=0, column=0)
-    tk.Label(frame, text="目的线路:").grid(row=1, column=0)
-
     # 站点选择下拉菜单，初始为空
-    start_station_menu = tk.OptionMenu(frame, start_station_var, ())
+    start_station_menu = tk.OptionMenu(frame, start_station_var, "选择起始站")
     start_station_menu.grid(row=0, column=3, padx=10, pady=10)
-    end_station_menu = tk.OptionMenu(frame, end_station_var, ())
+    end_station_menu = tk.OptionMenu(frame, end_station_var, "选择目的站")
     end_station_menu.grid(row=1, column=3, padx=10, pady=10)
 
-    tk.Label(frame, text="起始站点:").grid(row=0, column=2)
-    tk.Label(frame, text="目的站点:").grid(row=1, column=2)
+    # 查询类型选择下拉菜单
+    query_type_menu = tk.OptionMenu(frame, query_type_var, '最短时间', '最少换乘')
+    query_type_menu.grid(row=2, column=1, padx=10, pady=10)
 
     # 更新站点下拉菜单的函数
     def update_station_menu(line_var, station_var, station_menu):
-        selected_line = next(line for line in data['lines'] if line['lineName'] == line_var.get())
+        selected_line = next((line for line in data['lines'] if line['lineName'] == line_var.get()), None)
         station_var.set('')
         menu = station_menu["menu"]
         menu.delete(0, 'end')
         for station in selected_line['stations']:
-            menu.add_command(label=station['stationName'],
-                             command=lambda value=station['stationName']: station_var.set(value))
+            menu.add_command(label=station['stationName'], command=lambda value=station['stationName']: station_var.set(value))
 
     # 绑定更新函数到线路变量
     start_line_var.trace('w', lambda *args: update_station_menu(start_line_var, start_station_var, start_station_menu))
@@ -90,13 +87,19 @@ def setup_path_query_window(data):
     def execute_query():
         start_station = start_station_var.get()
         end_station = end_station_var.get()
+        query_type = query_type_var.get()  # 确保有一个变量来获取查询类型
         graph = build_graph(data)
-        path = calculate_shortest_path(start_station, end_station, graph)
-        show_path_results(path, data)
+
+        if query_type == 'time':
+            path, total_time, transfers = calculate_shortest_time_path(start_station, end_station, graph)
+        else:
+            path, total_time, transfers = calculate_least_transfers_path(start_station, end_station, graph)
+
+        show_path_results(path, total_time, data)  # 调整函数调用以传递额外的参数
         window.destroy()
 
-    query_button = tk.Button(frame, text="查询路径", command=execute_query)
-    query_button.grid(row=2, column=1, columnspan=2, pady=20)
+    query_button = tk.Button(frame, text="transfers", command=execute_query)
+    query_button.grid(row=3, column=1, columnspan=2, pady=20)
 
     window.mainloop()
 

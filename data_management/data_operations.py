@@ -74,7 +74,7 @@ def build_graph(data):
         from_station_info = next((s for l in data['lines'] for s in l['stations'] if s['stationName'] == transfer['fromStation'] and s['lineID'] == transfer['fromLine']), None)
         to_station_info = next((s for l in data['lines'] for s in l['stations'] if s['stationName'] == transfer['toStation'] and s['lineID'] == transfer['toLine']), None)
         if from_station_info and to_station_info and from_station_info['status'] == 'open' and to_station_info['status'] == 'open':
-            weight = transfer.get('weight', None)  # 获取换乘的权重
+            weight = transfer.get('nextWeight', None)  # 获取换乘的权重
             if weight is not None:  # 确保权重有效
                 graph[from_station_info['stationName']][to_station_info['stationName']] = weight
                 graph[to_station_info['stationName']][from_station_info['stationName']] = weight

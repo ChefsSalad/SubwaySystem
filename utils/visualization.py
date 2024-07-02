@@ -17,6 +17,7 @@ def draw_line(canvas, line, data, line_menu, line_var):
     step_x, step_y = 100, 50  # 站点间水平和垂直的距离
     max_x = canvas.winfo_width() - 100  # 避免溢出画布的最大x位置
     direction = 1  # x方向移动，1向右，-1向左
+    last_x, last_y = x, y  # 用于追踪上一个站点的位置，以便在拐弯处连接线路
 
     for i, station in enumerate(line['stations']):
         # 判断是否为换乘站
@@ -27,22 +28,22 @@ def draw_line(canvas, line, data, line_menu, line_var):
         canvas.create_oval(x - 10, y - 10, x + 10, y + 10, fill="red" if is_transfer else "blue", outline="black", tags=(station_id,))
         canvas.create_text(x, y + 20, text=station['stationName'])
         canvas.tag_bind(station_id, "<Button-3>",
-                        lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID'], line_menu,
-                                                                line_var))
+                        lambda event, s=station: on_right_click(event, s, canvas, data, line['lineID'], line_menu, line_var))
 
         # 如果站点状态是封闭的，则绘制叉号
         if station.get('status') == 'closed':
             canvas.create_line(x - 12, y - 12, x + 12, y + 12, fill="black", width=2)
             canvas.create_line(x + 12, y - 12, x - 12, y + 12, fill="black", width=2)
 
-        # 如果存在下一个站点且当前站点有权重，则绘制连线和显示权重
-        if i < len(line['stations']) - 1 and 'nextWeight' in station:
-            next_station = line['stations'][i + 1]
-            canvas.create_line(x, y, x + direction * step_x, y, fill="gray")
-            mid_x, mid_y = x + direction * step_x / 2, y
-            canvas.create_text(mid_x, mid_y, text=str(station['nextWeight']), fill="black", font=('Helvetica', 10))
+        # 在拐弯前连线到当前站点
+        if i > 0:
+            canvas.create_line(last_x, last_y, x, y, fill="gray")
+            if 'nextWeight' in line['stations'][i - 1]:  # Check if the previous station has a weight to the current station
+                mid_x, mid_y = (last_x + x) / 2, (last_y + y) / 2
+                canvas.create_text(mid_x, mid_y, text=str(line['stations'][i - 1]['nextWeight']), fill="black", font=('Helvetica', 10))
 
-        # 计算下一个站点的x和y位置
+        # 计算下一个站点的x和y位置，并更新last_x, last_y为当前站点位置
+        last_x, last_y = x, y
         next_x = x + direction * step_x
         if next_x > max_x or next_x < start_x:
             # 如果下一个x位置超出界限，则换行并反转方向

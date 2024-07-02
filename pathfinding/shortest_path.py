@@ -2,69 +2,93 @@ from collections import deque
 import tkinter as tk
 from tkinter import messagebox
 
-
 # 执行最短路径计算
-def calculate_shortest_path(start, end, graph):
-    """
-    Uses Breadth-First Search (BFS) to find the shortest path between two stations in a subway network.
-    :param start: Starting station name.
-    :param end: Ending station name.
-    :param graph: Graph of the subway system where keys are station names and values are sets of connected stations.
-    :return: List of stations representing the shortest path, or None if no path exists.
-    """
+import heapq
+
+
+def calculate_shortest_time_path(start, end, graph):
     if start not in graph or end not in graph:
-        return None
+        return None, 0
 
-    queue = deque([(start, [start])])  # Queue of tuples (current_station, path_to_station)
-    visited = set()
+    queue = [(0, start, [start])]
+    visited = {}
+    while queue:
+        current_time, current, path = heapq.heappop(queue)
 
+        if current in visited and visited[current] <= current_time:
+            continue
+        visited[current] = current_time
+
+        if current == end:
+            transfers = sum(1 for i in range(len(path) - 1) if path[i].split('_')[0] != path[i + 1].split('_')[0])
+            return path, current_time, transfers
+
+        for neighbor, time in graph[current].items():
+            if neighbor not in visited or visited[neighbor] > current_time + time:
+                heapq.heappush(queue, (current_time + time, neighbor, path + [neighbor]))
+
+    return None, 0, 0
+
+
+def calculate_least_transfers_path(start, end, graph):
+    if start not in graph or end not in graph:
+        return None, 0, 0
+
+    queue = deque([(start, [start])])
+    visited = {}
     while queue:
         current, path = queue.popleft()
 
+        if current in visited:
+            continue
+        visited[current] = path
+
         if current == end:
-            return path
+            total_time = sum(graph[path[i]][path[i + 1]] for i in range(len(path) - 1))
+            transfers = sum(1 for i in range(len(path) - 1) if path[i].split('_')[0] != path[i + 1].split('_')[0])
+            return path, total_time, transfers
 
         for neighbor in graph[current]:
             if neighbor not in visited:
-                visited.add(neighbor)
                 queue.append((neighbor, path + [neighbor]))
 
-    return None
+    return None, 0, 0
 
 
-# 显示路径查询结果
-def show_path_results(path, data):
-    """
-    Formats and displays the result of a path search, considering transfers and closed stations.
-    :param path: List of station names forming the path from start to end.
-    :param data: Subway data containing station status and transfer information.
-    """
+def show_path_results(path, total_time, data):
     if not path:
         result = "不可到达。"
     else:
-        result = ""
+        result = "路线详情：\n"
         previous_line = None
+        station_count = 0  # 用于计数经过的站点
+        details = []  # 用于存储路线的详细信息
+        transfers = 0  # 用于计数换乘次数
+
         for i in range(len(path) - 1):
             current_station = path[i]
             next_station = path[i + 1]
+            # 查找当前站点和下一站点所在的线路名称
+            current_line = next((line['lineName'] for line in data['lines'] if
+                                 any(s['stationName'] == current_station for s in line['stations']) and
+                                 any(s['stationName'] == next_station for s in line['stations'])), None)
+            if previous_line is None:
+                # 初始化时设置起始站和线路信息
+                previous_line = current_line
+                details.append(f"从 {current_station} (乘坐 {current_line} ) 出发，")
+                station_count = 1
+            elif previous_line == current_line:
+                station_count += 1  # 同一条线路上，累加站点数量
+            else:
+                # 当换乘到不同的线路时，记录前一条线路的信息
+                details.append(f"经过 {station_count} 站在 {current_station} 换乘至 {current_line}")
+                station_count = 1  # 重置站点计数器
+                transfers += 1  # 增加换乘次数
+                previous_line = current_line
 
-            # Determine the line of the current connection
-            current_line = None
-            for line in data['lines']:
-                if any(s['stationName'] == current_station for s in line['stations']) and any(
-                        s['stationName'] == next_station for s in line['stations']):
-                    current_line = line['lineName']
-                    break
+        # 添加最后一条线路的信息
+        details.append(f"经过 {station_count} 站在 {path[-1]} 下车。")
 
-            if previous_line is None or previous_line != current_line:
-                if result:
-                    result += f"\n{current_line} 线 {current_station} 上，"
-                else:
-                    result += f"乘坐 {current_line} 线 {current_station} 上车，"
-
-            if i == len(path) - 2:
-                result += f"{next_station} 下车"
-
-            previous_line = current_line
+        result += " ".join(details) + f"\n总时间: {total_time} 分钟\n换乘次数: {transfers}"
 
     tk.messagebox.showinfo("查询结果", result)
