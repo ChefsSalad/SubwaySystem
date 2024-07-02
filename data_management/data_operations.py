@@ -24,7 +24,7 @@ def add_line(line_id, line_name, stations, time_weights=None):
             "stationName": name,
             "lineID": line_id,
             "status": "open",
-            "timeToNext": time_weights[index] if index < len(time_weights) else None  # 最后一个站点没有下一站，因此为None
+            "nextWeight": time_weights[index] if index < len(time_weights) else None  # 最后一个站点没有下一站，因此为None
         }
         station_objects.append(station_obj)
 

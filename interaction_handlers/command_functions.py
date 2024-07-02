@@ -8,36 +8,43 @@ import re  # 导入正则表达式库
 # 添加邻近站点
 def add_neighboring_station(station, data, canvas, line_id, line_menu, line_var):
     def submit():
-        new_station_name = entry.get()
+        new_station_name = station_name_entry.get()
         position = var.get()
+        weight_input = weight_entry.get().strip()
+
         # Ensure input is not empty
         if not new_station_name.strip():
-            tk.messagebox.showerror("Error", "Station name cannot be empty")
+            messagebox.showerror("Error", "Station name cannot be empty")
             return
+        if not weight_input.isdigit():
+            messagebox.showerror("Error", "Weight must be a numeric value")
+            return
+        time_weight = int(weight_input)
 
         current_line = next((line for line in data['lines'] if line['lineID'] == line_id), None)
 
         # Check for duplicate station names
         if any(st['stationName'] == new_station_name for st in current_line['stations']):
-            tk.messagebox.showerror("Error", "A station with the same name already exists on this line. Please use a different name.")
+            messagebox.showerror("Error",
+                                 "A station with the same name already exists on this line. Please use a different name.")
             return
 
         # Find the current station in data and insert the new station based on selected position
         for line in data['lines']:
             for idx, st in enumerate(line['stations']):
                 if st['stationName'] == station['stationName']:
-                    time_weight = 1  # Default time weight if not specified
-                    new_station = {"stationID": str(idx + 1), "stationName": new_station_name, "lineID": line_id, "status": "open", "timeToNext": time_weight}
+                    new_station = {"stationID": str(idx + 1), "stationName": new_station_name, "lineID": line_id,
+                                   "status": "open", "nextWeight": time_weight}
                     if position == 'prev':
                         # Adjust time weights accordingly
                         if idx > 0:
-                            new_station['timeToNext'] = line['stations'][idx - 1]['timeToNext']
-                            line['stations'][idx - 1]['timeToNext'] = time_weight
+                            new_station['nextWeight'] = line['stations'][idx - 1]['nextWeight']
+                            line['stations'][idx - 1]['nextWeight'] = time_weight
                         line['stations'].insert(idx, new_station)
                     else:
                         if idx < len(line['stations']) - 1:
-                            new_station['timeToNext'] = line['stations'][idx]['timeToNext']
-                        line['stations'][idx]['timeToNext'] = time_weight
+                            new_station['nextWeight'] = line['stations'][idx]['nextWeight']
+                        line['stations'][idx]['nextWeight'] = time_weight
                         line['stations'].insert(idx + 1, new_station)
                     break
 
@@ -62,8 +69,12 @@ def add_neighboring_station(station, data, canvas, line_id, line_menu, line_var)
     tk.Radiobutton(window, text="Add Next Station", variable=var, value="next").pack()
 
     Label(window, text="Station Name:").pack()
-    entry = Entry(window)
-    entry.pack()
+    station_name_entry = Entry(window)
+    station_name_entry.pack()
+
+    Label(window, text="Weight to Next/Previous Station:").pack()
+    weight_entry = Entry(window)
+    weight_entry.pack()
 
     Button(window, text="Submit", command=submit).pack()
 
@@ -135,6 +146,12 @@ def toggle_station_status(station, data, canvas, line_id, new_status, line_menu,
 
 
 # 添加换乘站点
+import tkinter as tk
+from tkinter import Toplevel, Label, Entry, Button, messagebox, StringVar, OptionMenu
+from data_management.data_operations import get_line, save_data
+from utils.visualization import draw_line
+
+
 def add_transfer(station, data, canvas, listbox, line_menu, line_var):
     line_id = station['lineID']  # Directly obtain lineID from station data
     transfer_window = tk.Toplevel()
@@ -146,13 +163,21 @@ def add_transfer(station, data, canvas, listbox, line_menu, line_var):
     # Dropdown menu to select a line, excluding the current station's line
     line_var = tk.StringVar(transfer_window)
     line_options = [line['lineName'] for line in data['lines'] if line['lineID'] != line_id]
-    line_menu = OptionMenu(main_frame, line_var, *line_options) if line_options else OptionMenu(main_frame, line_var, "No available lines")
+    if line_options:
+        line_menu = tk.OptionMenu(main_frame, line_var, *line_options)
+    else:
+        line_menu = tk.OptionMenu(main_frame, line_var, "No available lines")
     line_menu.pack()
 
     # Dropdown menu for station selection, initially empty
     station_var = tk.StringVar(transfer_window)
-    station_menu = OptionMenu(main_frame, station_var, "Select a station")
+    station_menu = tk.OptionMenu(main_frame, station_var, "Select a station")
     station_menu.pack()
+
+    # Entry for weight to and from the transfer station
+    Label(main_frame, text="Weight to Transfer Station:").pack()
+    weight_entry = tk.Entry(main_frame)
+    weight_entry.pack()
 
     # Function to update the station menu based on the selected line
     def update_station_menu(*args):
@@ -160,7 +185,8 @@ def add_transfer(station, data, canvas, listbox, line_menu, line_var):
         station_menu['menu'].delete(0, 'end')
         if selected_line:
             for station in selected_line['stations']:
-                station_menu['menu'].add_command(label=station['stationName'], command=lambda value=station['stationName']: station_var.set(value))
+                station_menu['menu'].add_command(label=station['stationName'],
+                                                 command=lambda value=station['stationName']: station_var.set(value))
         else:
             station_menu['menu'].add_command(label="No stations", command=lambda: station_var.set("No stations"))
 
@@ -168,20 +194,33 @@ def add_transfer(station, data, canvas, listbox, line_menu, line_var):
 
     # Confirm transfer addition
     def confirm_transfer():
+        weight = weight_entry.get().strip()
+        if not weight.isdigit():
+            messagebox.showerror("Error", "Weight must be a numeric value.")
+            return
+        weight = int(weight)
+
         to_line = next((line for line in data['lines'] if line['lineName'] == line_var.get()), None)
-        if to_line and not any(
-                t['fromStation'] == station['stationName'] and t['toStation'] == station_var.get() for t in
-                data['transfers']):
+        to_station_name = station_var.get()
+        if to_line and to_station_name:
             new_transfer = {
                 "fromLine": line_id,
                 "fromStation": station['stationName'],
                 "toLine": to_line['lineID'],
-                "toStation": station_var.get()
+                "toStation": to_station_name,
+                "nextWeight": weight
+            }
+            reverse_transfer = {
+                "fromLine": to_line['lineID'],
+                "fromStation": to_station_name,
+                "toLine": line_id,
+                "toStation": station['stationName'],
+                "nextWeight": weight
             }
             data['transfers'].append(new_transfer)
+            data['transfers'].append(reverse_transfer)
             save_data()
-            listbox.insert(tk.END,
-                           f"{new_transfer['fromLine']} line {new_transfer['fromStation']} to {new_transfer['toLine']} line {new_transfer['toStation']}")
+            listbox.insert(tk.END, f"新增： {station['stationName']} <-> {to_station_name}")
             transfer_window.destroy()
             # Refresh the canvas to display the update
             line = get_line(line_id)
@@ -221,7 +260,6 @@ def delete_transfer(transfers, listbox, data, canvas, line_id, line_menu, line_v
 
 # 处理添加新线路
 def submit_new_line(line_id, line_name, stations, window, line_menu, line_var):
-
     if line_menu is not None:
         update_line_dropdown(line_menu, line_var)
     else:
@@ -245,7 +283,6 @@ def submit_new_line(line_id, line_name, stations, window, line_menu, line_var):
 
 def update_line_dropdown(line_menu, line_var):
     data = get_data()  # 假设 get_data() 在某个模块中定义，如 data_management
-
 
     menu = line_menu['menu']
     menu.delete(0, 'end')  # 删除旧的菜单项

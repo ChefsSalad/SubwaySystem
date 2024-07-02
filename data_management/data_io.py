@@ -11,6 +11,7 @@ data = {
     "transfers": []
 }
 
+
 def load_data():
     global data
     if not os.path.exists(data_path):
@@ -23,6 +24,7 @@ def load_data():
             messagebox.showerror("加载错误", f"无法解析数据文件: {e}")
             data = {"lines": [], "transfers": []}  # 如果文件损坏，初始化为空数据结构
 
+
 def save_data():
     global data
     try:
@@ -34,5 +36,6 @@ def save_data():
             # messagebox.showinfo("保存数据", "数据已成功保存！")
     except Exception as e:
         messagebox.showerror("保存错误", f"无法保存数据: {e}")
+
 
 load_data()

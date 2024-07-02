@@ -45,7 +45,7 @@ def view_transfers(station, data, canvas, line_menu, line_var):
 
     listbox = tk.Listbox(window)
     for t in transfers:
-        listbox.insert(tk.END, f"从 {t['fromLine']} 线 {t['fromStation']} 换乘到 {t['toLine']} 线 {t['toStation']}")
+        listbox.insert(tk.END, f" {t['fromLine']} ： {t['fromStation']} -> {t['toLine']} ： {t['toStation']} —— {t['nextWeight']}")
     listbox.pack(fill=tk.BOTH, expand=True)
 
     # 删除和添加换乘站的按钮
