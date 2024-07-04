@@ -6,73 +6,232 @@
             "stations": [
                 {
                     "stationID": "1",
-                    "stationName": "人民广场",
+                    "stationName": "莘庄",
                     "lineID": "1",
                     "status": "open",
-                    "nextWeight": 10
+                    "nextWeight": 3
                 },
                 {
                     "stationID": "2",
-                    "stationName": "黄陂南路",
+                    "stationName": "外环路",
                     "lineID": "1",
                     "status": "open",
-                    "nextWeight": 1
+                    "nextWeight": 8
                 },
                 {
                     "stationID": "3",
-                    "stationName": "陕西南路",
-                    "lineID": "1",
-                    "status": "open",
-                    "nextWeight": 1
-                },
-                {
-                    "stationID": "4",
-                    "stationName": "常熟路",
-                    "lineID": "1",
-                    "status": "closed",
-                    "nextWeight": 1
-                },
-                {
-                    "stationID": "5",
-                    "stationName": "衡山路",
+                    "stationName": "莲花路",
                     "lineID": "1",
                     "status": "open",
                     "nextWeight": 5
                 },
                 {
-                    "stationID": "6",
-                    "stationName": "徐家汇",
+                    "stationID": "4",
+                    "stationName": "锦江乐园",
                     "lineID": "1",
-                    "status": "closed",
-                    "nextWeight": 1
+                    "status": "open",
+                    "nextWeight": 2
+                },
+                {
+                    "stationID": "5",
+                    "stationName": "上海南站",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 10
+                },
+                {
+                    "stationID": "6",
+                    "stationName": "漕宝路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 7
                 },
                 {
                     "stationID": "7",
                     "stationName": "上海体育馆",
                     "lineID": "1",
                     "status": "open",
-                    "nextWeight": 1
+                    "nextWeight": 4
                 },
                 {
                     "stationID": "8",
-                    "stationName": "漕宝路",
+                    "stationName": "徐家汇",
                     "lineID": "1",
                     "status": "open",
-                    "nextWeight": 1
+                    "nextWeight": 9
                 },
                 {
                     "stationID": "9",
-                    "stationName": "上海南站",
+                    "stationName": "衡山路",
                     "lineID": "1",
                     "status": "open",
                     "nextWeight": 1
                 },
                 {
                     "stationID": "10",
-                    "stationName": "锦江乐园",
+                    "stationName": "常熟路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "11",
+                    "stationName": "黄陂南路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 2
+                },
+                {
+                    "stationID": "12",
+                    "stationName": "人民广场",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 8
+                },
+                {
+                    "stationID": "13",
+                    "stationName": "新闸路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 7
+                },
+                {
+                    "stationID": "14",
+                    "stationName": "汉中路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 4
+                },
+                {
+                    "stationID": "15",
+                    "stationName": "上海火车站",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 9
+                },
+                {
+                    "stationID": "16",
+                    "stationName": "中山北路",
                     "lineID": "1",
                     "status": "open",
                     "nextWeight": 1
+                },
+                {
+                    "stationID": "17",
+                    "stationName": "延长路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 3
+                },
+                {
+                    "stationID": "18",
+                    "stationName": "上海马戏城",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 7
+                },
+                {
+                    "stationID": "19",
+                    "stationName": "汶水路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "20",
+                    "stationName": "彭浦新村",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 8
+                },
+                {
+                    "stationID": "21",
+                    "stationName": "共康路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "22",
+                    "stationName": "通河新村",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 9
+                },
+                {
+                    "stationID": "23",
+                    "stationName": "呼兰路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 2
+                },
+                {
+                    "stationID": "24",
+                    "stationName": "共富新村",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 3
+                },
+                {
+                    "stationID": "25",
+                    "stationName": "宝安公路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "26",
+                    "stationName": "友谊西路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": 1
+                },
+                {
+                    "stationID": "27",
+                    "stationName": "富锦路",
+                    "lineID": "1",
+                    "status": "open",
+                    "nextWeight": null
+                }
+            ]
+        },
+        {
+            "lineID": "2",
+            "lineName": "二号线",
+            "stations": [
+                {
+                    "stationID": "1",
+                    "stationName": "桂林路",
+                    "lineID": "2",
+                    "status": "open",
+                    "nextWeight": 100
+                }
+            ]
+        },
+        {
+            "lineID": "7",
+            "lineName": "7号线",
+            "stations": [
+                {
+                    "stationID": "1",
+                    "stationName": "东华大学",
+                    "lineID": "7",
+                    "status": "open",
+                    "nextWeight": 1
+                },
+                {
+                    "stationID": "2",
+                    "stationName": "复旦大学",
+                    "lineID": "7",
+                    "status": "open",
+                    "nextWeight": 1
+                },
+                {
+                    "stationID": "3",
+                    "stationName": "交通大学",
+                    "lineID": "7",
+                    "status": "open",
+                    "nextWeight": null
                 }
             ]
         },
@@ -82,52 +241,269 @@
             "stations": [
                 {
                     "stationID": "1",
+                    "stationName": "松江南站",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "2",
+                    "stationName": "松江大学城",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "3",
+                    "stationName": "洞泾",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "4",
+                    "stationName": "佘山",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "5",
+                    "stationName": "泗泾",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "6",
+                    "stationName": "九亭",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "7",
+                    "stationName": "中春路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "8",
+                    "stationName": "七宝",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "9",
+                    "stationName": "星中路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "10",
+                    "stationName": "合川路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "11",
                     "stationName": "漕河泾开发区",
                     "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 7
+                },
+                {
+                    "stationID": "12",
+                    "stationName": "桂林路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "13",
+                    "stationName": "宜山路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "14",
+                    "stationName": "徐家汇",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 4
+                },
+                {
+                    "stationID": "15",
+                    "stationName": "肇嘉浜路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 4
+                },
+                {
+                    "stationID": "16",
+                    "stationName": "打浦桥",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 4
+                },
+                {
+                    "stationID": "17",
+                    "stationName": "马当路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 3
+                },
+                {
+                    "stationID": "18",
+                    "stationName": "陆家浜路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 1
+                },
+
+                {
+                    "stationID": "20",
+                    "stationName": "小南门",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 3
+                },
+                {
+                    "stationID": "21",
+                    "stationName": "商城路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 4
+                },
+                {
+                    "stationID": "22",
+                    "stationName": "世纪大道",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 4
+                },
+                {
+                    "stationID": "23",
+                    "stationName": "杨高中路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 5
+                },
+                {
+                    "stationID": "24",
+                    "stationName": "芳甸路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 6
+                },
+                {
+                    "stationID": "25",
+                    "stationName": "蓝天路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 7
+                },
+                {
+                    "stationID": "26",
+                    "stationName": "台儿庄路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 8
+                },
+                {
+                    "stationID": "27",
+                    "stationName": "金桥",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 9
+                },
+                {
+                    "stationID": "28",
+                    "stationName": "金吉路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 10
+                },
+                {
+                    "stationID": "29",
+                    "stationName": "曹路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 8
+                },
+                {
+                    "stationID": "30",
+                    "stationName": "顾唐路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 9
+                },
+                {
+                    "stationID": "31",
+                    "stationName": "民雷路",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": 9
+                },
+                {
+                    "stationID": "32",
+                    "stationName": "上海迪士尼",
+                    "lineID": "9",
+                    "status": "open",
+                    "nextWeight": null
+                }
+            ]
+        },
+        {
+            "lineID": "10",
+            "lineName": "十号线",
+            "stations": [
+                {
+                    "stationID": "1",
+                    "stationName": "桂林路",
+                    "lineID": "10",
                     "status": "open",
                     "nextWeight": 1
                 },
                 {
                     "stationID": "2",
-                    "stationName": "桂林路",
-                    "lineID": "9",
+                    "stationName": "交通大学",
+                    "lineID": "10",
                     "status": "open",
                     "nextWeight": 1
                 },
                 {
                     "stationID": "3",
-                    "stationName": "宜山路",
-                    "lineID": "9",
+                    "stationName": "上海图书馆",
+                    "lineID": "10",
                     "status": "open",
                     "nextWeight": 1
                 },
                 {
                     "stationID": "4",
-                    "stationName": "徐家汇",
-                    "lineID": "9",
-                    "status": "closed",
+                    "stationName": "老西门",
+                    "lineID": "10",
+                    "status": "open",
                     "nextWeight": 1
                 },
                 {
                     "stationID": "5",
-                    "stationName": "肇嘉浜路",
-                    "lineID": "9",
+                    "stationName": "陆家浜路",
+                    "lineID": "10",
                     "status": "open",
                     "nextWeight": 1
                 },
                 {
                     "stationID": "6",
-                    "stationName": "嘉善路",
-                    "lineID": "9",
+                    "stationName": "南京东路",
+                    "lineID": "10",
                     "status": "open",
                     "nextWeight": 1
-                },
-                {
-                    "stationID": "7",
-                    "stationName": "打浦桥",
-                    "lineID": "9",
-                    "status": "open",
-                    "nextWeight": null
                 }
             ]
         }
@@ -145,6 +521,97 @@
             "fromStation": "徐家汇",
             "toLine": "1",
             "toStation": "徐家汇",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "世纪大道",
+            "toLine": "2",
+            "toStation": "世纪大道",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "世纪大道",
+            "toLine": "4",
+            "toStation": "世纪大道",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "世纪大道",
+            "toLine": "6",
+            "toStation": "世纪大道",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "宜山路",
+            "toLine": "3",
+            "toStation": "宜山路",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "宜山路",
+            "toLine": "4",
+            "toStation": "宜山路",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "肇嘉浜路",
+            "toLine": "7",
+            "toStation": "肇嘉浜路",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "陆家浜路",
+            "toLine": "8",
+            "toStation": "陆家浜路",
+            "nextWeight": 1
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "陆家浜路",
+            "toLine": "10",
+            "toStation": "陆家浜路",
+            "nextWeight": 1
+        },
+        {
+            "fromLine": "10",
+            "fromStation": "陆家浜路",
+            "toLine": "9",
+            "toStation": "陆家浜路",
+            "nextWeight": 1
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "桂林路",
+            "toLine": "10",
+            "toStation": "桂林路",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "杨高中路",
+            "toLine": "14",
+            "toStation": "杨高中路",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "蓝天路",
+            "toLine": "6",
+            "toStation": "蓝天路",
+            "nextWeight": 10
+        },
+        {
+            "fromLine": "9",
+            "fromStation": "商城路",
+            "toLine": "4",
+            "toStation": "商城路",
             "nextWeight": 10
         }
     ]

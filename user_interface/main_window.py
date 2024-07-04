@@ -90,7 +90,7 @@ def setup_path_query_window(data):
         query_type = query_type_var.get()  # 确保有一个变量来获取查询类型
         graph = build_graph(data)
 
-        if query_type == 'time':
+        if query_type == '最短时间':
             path, total_time, transfers = calculate_shortest_time_path(start_station, end_station, graph)
         else:
             path, total_time, transfers = calculate_least_transfers_path(start_station, end_station, graph)
